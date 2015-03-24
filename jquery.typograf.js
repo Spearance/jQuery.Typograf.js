@@ -26,6 +26,7 @@
 			var $this = $(this),
 				obj = $this.get(0),
 				exclude = false,
+				selected = false,
 				caretPosition = 0;
 			
 			// exist Typograf handler
@@ -54,17 +55,24 @@
 			} else {
 				// auto
 				$this.keydown(function(e){
-					// exclude Ctrl/⌘
-					if(e.metaKey || e.ctrlKey){
-						exclude = true;
-					} else {
-						exclude = false;
-					}
+					// check for Ctrl/⌘
+					exclude = (e.metaKey || e.ctrlKey)? true : false;
 				}).keyup(function(e){
+					// check for selected text
+					selected = (getSelectionText() != "") ? true : false;
+					
 					// exclude arrows and Ctrl/⌘ + A/C/V/X/Z
 					if(
-						e.which != "37" && e.which != "38" && e.which != "39" && e.which != "40" && 
-						!(exclude && (e.which == "65" || e.which == "67" || e.whitch == "86" || e.whitch == "88" || e.whitch == "90"))
+						// home, end, page up, page down
+						e.which != "33" && e.which != "34" && e.which != "35" && e.which != "36" &&
+						// arrows
+						e.which != "37" && e.which != "38" && e.which != "39" && e.which != "40" &&
+						// single Shift
+						e.which != "16" &&
+						// select all, copy, paste, cut, undo
+						!(exclude && (e.which == "65" || e.which == "67" || e.whitch == "86" || e.whitch == "88" || e.whitch == "90")) &&
+						// selected text
+						!selected
 					){
 						typograf($this);
 					}
@@ -141,7 +149,7 @@
 			// Firefox support
 			else if (ctrl.selectionStart || ctrl.selectionStart == '0')
 				CaretPos = ctrl.selectionStart;
-			return (CaretPos);
+			return CaretPos;
 		}
 
 		function setCaretPosition(ctrl, pos){
@@ -155,6 +163,18 @@
 				range.moveStart("character", pos);
 				range.select();
 			}
+		}
+		
+		function getSelectionText(){
+			var t = "";
+			if(window.getSelection){
+				t = window.getSelection();
+			}else if(document.getSelection){
+				t = document.getSelection();
+			}else if(document.selection){
+				t = document.selection.createRange().text;
+			}
+			return t;
 		}
 	};
 })(jQuery);
