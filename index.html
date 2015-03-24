@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>jQuery.Typograf.js</title>
+		<meta name="author" content="Evgeniy Lepeshkin" />
+		<meta name="copyright" content="2015, © Evgeniy Lepeshkin" />
+		<meta http-equiv="Reply-to" content="mail@typograf.ru" />
+
+		<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="jquery.typograf.js"></script>
+		<script type="text/javascript" src="example.js"></script>
+	</head>
+	<body>
+		<h1>jQuery.Typograf.js</h1>
+		
+		<p>"Вы все еще кое-как верстаете в "Word-е"? - Тогда мы идем к вам!"</p>
+		<button type="button" id="example">Пример</button>
+		
+		<br/><br/>
+		
+		<label>Типографика и возврат по клику</label><br/>
+		<input type="text"  style="width:800px" autocomplete="off" class="typograf" />
+		<button type="button" id="typograf">Типографить</button>
+		<button type="button" id="restore" disabled="true" autocomplete="off">Восстановить</button>
+		
+		<br/><br/>
+		
+		<label>Автотипографика на лету при печати</label><br/>
+		<textarea rows="15" style="width:800px" autocomplete="off" class="typograf"></textarea>
+		
+		<p>Умеет верстать кавычки, тире, спецсимволы: …, ©, ®, ™, ₽. Умеет ставить минус между числами и &times; между размерными единицами.</p>
+	</body>
+</html>
