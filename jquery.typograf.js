@@ -101,10 +101,9 @@
 
 			function typograf (textField){
 				var text = textField.val();
-
 				caretPosition = getCaretPosition(obj);
 
-				text
+				text = text
 					// Dash
 					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
 
