@@ -168,11 +168,11 @@
 					.replace(/([a-zа-я0-9…?!])\"/ig,
 					         "$1" + options.rightQuote)
 
-					// Open quote // TODO: Clarify, why 2nd time
+					// Open quote
 					.replace(new RegExp("\"(" + options.leftQuote + "[a-zа-я0-9…])", "ig"),
 					         options.leftQuote + "$1")
 
-					// Close quote // TODO: Clarify, why 2nd time
+					// Close quote
 					.replace(new RegExp("([a-zа-я0-9…?!]" + options.rightQuote + ")\"", "ig"),
 					         "$1" + options.rightQuote)
 
