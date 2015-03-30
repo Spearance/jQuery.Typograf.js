@@ -59,10 +59,7 @@
 				$this
 					.keydown(function(e){
 						// check for Ctrl/⌘
-						exclude = Boolean(
-							(e.metaKey || e.ctrlKey) &&
-							!(e.altKey && e.ctrlKey) // Do not exclude Alt Gr
-						);
+						exclude = Boolean(e.metaKey || e.ctrlKey);
 					})
 					.keyup(function(e){
 						// check for selected text
@@ -82,18 +79,17 @@
 							e.which != "39" &&
 							e.which != "40" &&
 
-							// single Shift
+								// single Shift
 							e.which != "16" &&
 
-							// select all, copy, paste, cut, undo
-							!(exclude && (e.altKey ||
-							              e.which == "65" ||
+								// select all, copy, paste, cut, undo
+							!(exclude && (e.which == "65" ||
 							              e.which == "67" ||
 							              e.which == "86" ||
 							              e.which == "88" ||
 							              e.which == "90")) &&
 
-							// selected text
+								// selected text
 							!selected
 						){
 							typograf($this);
@@ -121,18 +117,6 @@
 					.replace(/<!—/ig, function(){
 						caretPosition++;
 						return "<!--";
-					})
-
-					// Multiple spaces
-					.replace(/ {2,}/g, function(str){
-						caretPosition -= str.length - 1;
-						return " ";
-					})
-
-					// Multiple nbsp
-					.replace(/ {2,}| \s|\s /g, function(str){
-						caretPosition -= str.length - 1;
-						return " ";
 					})
 
 					// Numerical interval
