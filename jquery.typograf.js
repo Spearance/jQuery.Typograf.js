@@ -86,7 +86,8 @@
 							e.which != "16" &&
 
 							// select all, copy, paste, cut, undo
-							!(exclude && (e.which == "65" ||
+							!(exclude && (e.altKey ||
+							              e.which == "65" ||
 							              e.which == "67" ||
 							              e.which == "86" ||
 							              e.which == "88" ||
