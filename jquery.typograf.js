@@ -15,29 +15,32 @@
 
 (function($){
 	$.fn.typograf = function(options){
-		var options = $.extend({
+		options = $.extend({
 			leftQuote: "«",
 			rightQuote: "»",
 			handler: "",
 			restor: ""
-	  	}, options);
+		}, options);
 
 		return this.each(function(){
 			var $this = $(this),
-				obj = $this.get(0),
-				exclude = false,
-				selected = false,
-				caretPosition = 0;
-			
+			    obj = $this.get(0),
+			    exclude = false,
+			    selected = false,
+			    caretPosition = 0,
+			    original;
+
 			// exist Typograf handler
-			if(options.handler){
-				var original = "";
+			if (options.handler) {
+				original = "";
+
 				$(options.handler).click(function(){
-					if(original == ""){
+					if (original == "") {
 						original = $this.val();
 					}
-					if(original){
-						if(options.restore){
+
+					if (original) {
+						if (options.restore) {
 							$(options.restore).removeAttr("disabled");
 						}
 						typograf($this);
@@ -45,8 +48,7 @@
 				});
 
 				// exist Restore handler
-				if(options.restore){
-					//var original = $this.val(); 
+				if (options.restore) {
 					$(options.restore).click(function(){
 						$(this).attr("disabled", "true");
 						$this.val(original);
@@ -54,108 +56,169 @@
 				}
 			} else {
 				// auto
-				$this.keydown(function(e){
-					// check for Ctrl/⌘
-					exclude = (e.metaKey || e.ctrlKey)? true : false;
-				}).keyup(function(e){
-					// check for selected text
-					selected = (getSelectionText() != "") ? true : false;
-					
-					// exclude arrows and Ctrl/⌘ + A/C/V/X/Z
-					if(
-						// home, end, page up, page down
-						e.which != "33" && e.which != "34" && e.which != "35" && e.which != "36" &&
-						// arrows
-						e.which != "37" && e.which != "38" && e.which != "39" && e.which != "40" &&
-						// single Shift
-						e.which != "16" &&
-						// select all, copy, paste, cut, undo
-						!(exclude && (e.which == "65" || e.which == "67" || e.whitch == "86" || e.whitch == "88" || e.whitch == "90")) &&
-						// selected text
-						!selected
-					){
-						typograf($this);
+				$this
+					.keydown(function(e){
+						// check for Ctrl/⌘
+						exclude = Boolean(e.metaKey || e.ctrlKey);
+					})
+					.keyup(function(e){
+						// check for selected text
+						selected = Boolean(getSelectionText() != "");
+
+						// exclude arrows and Ctrl/⌘ + A/C/V/X/Z
+						if (
+							// home, end, page up, page down
+							e.which != "33" &&
+							e.which != "34" &&
+							e.which != "35" &&
+							e.which != "36" &&
+
+							// arrows
+							e.which != "37" &&
+							e.which != "38" &&
+							e.which != "39" &&
+							e.which != "40" &&
+
+								// single Shift
+							e.which != "16" &&
+
+								// select all, copy, paste, cut, undo
+							!(exclude && (e.which == "65" ||
+							              e.which == "67" ||
+							              e.which == "86" ||
+							              e.which == "88" ||
+							              e.which == "90")) &&
+
+								// selected text
+							!selected
+						){
+							typograf($this);
+						}
+						return true;
 					}
-					return true;
-				});
+				);
 			}
 
-			function typograf(textField){
+			function typograf (textField){
+				var text = textField.val();
 				caretPosition = getCaretPosition(obj);
 
-				var r = textField.val().replace(/(^|\n|\s|>)\-(\s)/g,"$1—$2");
-				r = r.replace(/\-{2} /g, function(){
-					caretPosition -= 1;
-					return "— ";
-				});
-				r = r.replace(/<!—/ig,function(){
-					caretPosition += 1;
-					return "<!--";
-				});
-				r = r.replace(/(\d)( )?[-—]( )?(\d)/g, function(str, $1, $2, $3, $4){
-					if($2 == " "){ caretPosition = caretPosition - 1 };
-					if($3 == " "){ caretPosition = caretPosition - 1 };
-					return $1 + "–" + $4;
-				});
-				r = r.replace(/\([cс]\)/ig, function(){
-					caretPosition -= 2;
-					return "©";
-				});
-				r = r.replace(/\(r\)/ig, function(){
-					caretPosition -= 2;
-					return "®";
-				});
-				r = r.replace(/\(tm\)/ig, function(){
-					caretPosition -= 2;
-					return "™";
-				});
-				r = r.replace(/\([рp]\)/ig,	function(){
-					caretPosition -= 2;
-					return "₽";
-				});
-				r = r.replace(/\.{3}/g, function(){
-					caretPosition -= 2;
-					return "…";
-				});
-				r = r.replace(/(\d)[xх](\d)/ig,"$1×$2");
-				r = r.replace(/\"([a-zа-я0-9…])/ig, options.leftQuote + "$1");
-				r = r.replace(/([a-zа-я0-9…?!])\"/ig,"$1" + options.rightQuote);
-				var re = new RegExp("\"(" + options.leftQuote + "[a-zа-я0-9…])","ig");
-				r = r.replace(re, options.leftQuote + "$1");
-				var re = new RegExp("([a-zа-я0-9…?!]" + options.rightQuote + ")\"","ig");
-				r = r.replace(re,"$1" + options.rightQuote);
-				var re = new RegExp("([-a-z0-9]+=)[" + options.leftQuote + options.rightQuote + "]([^" + options.leftQuote + options.rightQuote + "]*?)","ig");
-				r = r.replace(re, "$1\"$2");
-				var re = new RegExp("([-a-z0-9]+=)[\"]([^" + options.leftQuote + options.rightQuote + "]*?)[" + options.leftQuote + options.rightQuote + "]","ig");
-				r = r.replace(re, "$1\"$2\"");
-				 
-				textField.val(r);
+				text = text
+					// Dash
+					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
 
-				if(!exclude){
+					// Minus
+					.replace(/\-{2} /g, function(){
+						caretPosition--;
+						return "— ";
+					})
+
+					// HTML-comment
+					.replace(/<!—/ig, function(){
+						caretPosition++;
+						return "<!--";
+					})
+
+					// Numerical interval
+					.replace(/(\d)( )?[-—]( )?(\d)/g, function(str, $1, $2, $3, $4){
+						if ($2 == " ") { caretPosition-- }
+						if ($3 == " ") { caretPosition-- }
+						return $1 + "–" + $4;
+					})
+
+					// Copyright
+					.replace(/\([cс]\)/ig, function(){
+						caretPosition -= 2;
+						return "©";
+					})
+
+					// Registered trademark
+					.replace(/\(r\)/ig, function(){
+						caretPosition -= 2;
+						return "®";
+					})
+
+					// Trademark
+					.replace(/\(tm\)/ig, function(){
+						caretPosition -= 2;
+						return "™";
+					})
+
+					// Rouble
+					.replace(/\([рp]\)/ig, function(){
+						caretPosition -= 2;
+						return "₽";
+					})
+
+					// Three dots
+					.replace(/\.{3}/g, function(){
+						caretPosition -= 2;
+						return "…";
+					})
+
+					// Sizes
+					.replace(/(\d)[xх](\d)/ig, "$1×$2")
+
+					// Open quote
+					.replace(/\"([a-zа-я0-9…])/ig,
+					         options.leftQuote + "$1")
+
+					// Close quote
+					.replace(/([a-zа-я0-9…?!])\"/ig,
+					         "$1" + options.rightQuote)
+
+					// Open quote
+					.replace(new RegExp("\"(" + options.leftQuote + "[a-zа-я0-9…])", "ig"),
+					         options.leftQuote + "$1")
+
+					// Close quote
+					.replace(new RegExp("([a-zа-я0-9…?!]" + options.rightQuote + ")\"", "ig"),
+					         "$1" + options.rightQuote)
+
+					// Fix HTML open quotes
+					.replace(new RegExp("([-a-z0-9]+=)" +
+					                    "["   + options.leftQuote + options.rightQuote + "]" +
+					                    "([^" + options.leftQuote + options.rightQuote + "]*?)", "ig"),
+					         "$1\"$2")
+
+					// Fix HTML close quotes
+					.replace(new RegExp("([-a-z0-9]+=)[\"]" +
+					                    "([^" + options.leftQuote + options.rightQuote + "]*?)" +
+					                    "["   + options.leftQuote + options.rightQuote + "]", "ig"),
+					         "$1\"$2\"");
+
+				textField.val(text);
+
+				if (!exclude) {
 					setCaretPosition(obj, caretPosition);
 				}
 			}
 
 		});
 
-		function getCaretPosition(ctrl){
-			var CaretPos = 0;	// IE Support
+		function getCaretPosition(ctrl) {
+			var CaretPos = 0, // IE Support
+			    Sel;
+
 			if (document.selection) {
 				ctrl.focus();
-				var Sel = document.selection.createRange();
+				Sel = document.selection.createRange();
 				Sel.moveStart('character', -ctrl.value.length);
 				CaretPos = Sel.text.length;
 			}
+
 			// Firefox support
-			else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+			else if (ctrl.selectionStart || ctrl.selectionStart == '0') {
 				CaretPos = ctrl.selectionStart;
+			}
+
 			return CaretPos;
 		}
 
 		function setCaretPosition(ctrl, pos){
-			if(ctrl.setSelectionRange){
+			if (ctrl.setSelectionRange) {
 				ctrl.focus();
-				ctrl.setSelectionRange(pos,pos);
+				ctrl.setSelectionRange(pos, pos);
 			} else if (ctrl.createTextRange) {
 				var range = ctrl.createTextRange();
 				range.collapse(true);
@@ -164,16 +227,18 @@
 				range.select();
 			}
 		}
-		
+
 		function getSelectionText(){
 			var t = "";
-			if(window.getSelection){
+
+			if (window.getSelection) {
 				t = window.getSelection();
-			}else if(document.getSelection){
+			} else if (document.getSelection) {
 				t = document.getSelection();
-			}else if(document.selection){
+			} else if (document.selection) {
 				t = document.selection.createRange().text;
 			}
+
 			return t;
 		}
 	};
