@@ -107,7 +107,7 @@
 					// Dash
 					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
 
-					// Minus
+					// Double hyphen
 					.replace(/\-{2} /g, function(){
 						caretPosition--;
 						return "— ";
