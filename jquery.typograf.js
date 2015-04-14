@@ -118,9 +118,9 @@
 					})
 
 					// Multiple nbsp
-					.replace(/ {2,}| \s|\s /g, function(str){
+					.replace(/\u00a0{2,}|\u00a0\s|\s\u00a0/g, function(str){
 						caretPosition -= str.length - 1;
-						return " ";
+						return "\u00a0";
 					})
 
 					// HTML-comment
