@@ -108,6 +108,9 @@
 				caretPosition = getCaretPosition(obj);
 
 				text = text
+					// Minus
+					.replace(/(\s)-(\d)/g, "$1−$2")
+
 					// Dash
 					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
 
