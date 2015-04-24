@@ -109,7 +109,7 @@
 
 				text = text
 					// Minus
-					.replace(/(\s)-(\d)/g, "$1−$2")
+					.replace(/\u0020-(\d)/g, "\u0020−$1")
 
 					// Dash
 					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
@@ -121,7 +121,7 @@
 					})
 
 					// Multiple nbsp
-					.replace(/\u00a0{2,}|\u00a0 | \u00a0/g, function(str){
+					.replace(/\u00a0{2,}|\u00a0\u0020|\u0020\u00a0/g, function(str){
 						caretPosition -= str.length - 1;
 						return "\u00a0";
 					})
@@ -133,9 +133,9 @@
 					})
 
 					// Numerical interval
-					.replace(/(\d)( )?[-—]( )?(\d)/g, function(str, $1, $2, $3, $4){
-						if ($2 == " ") { caretPosition-- }
-						if ($3 == " ") { caretPosition-- }
+					.replace(/(\d)(\u0020)?[-—](\u0020)?(\d)/g, function(str, $1, $2, $3, $4){
+						if ($2 == "\u0020") { caretPosition-- }
+						if ($3 == "\u0020") { caretPosition-- }
 						return $1 + "–" + $4;
 					})
 
