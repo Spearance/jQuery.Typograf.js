@@ -59,7 +59,11 @@
 				$this
 					.keydown(function(e){
 						// check for Ctrl/⌘
-						exclude = Boolean(e.metaKey || e.ctrlKey);
+						exclude = Boolean(
+							(e.metaKey || e.ctrlKey) &&
+							!(e.altKey && e.ctrlKey) // Do not exclude Alt Gr
+
+						);
 					})
 					.keyup(function(e){
 						// check for selected text
@@ -79,17 +83,17 @@
 							e.which != "39" &&
 							e.which != "40" &&
 
-								// single Shift
+							// single Shift
 							e.which != "16" &&
 
-								// select all, copy, paste, cut, undo
+							// select all, copy, paste, cut, undo
 							!(exclude && (e.which == "65" ||
 							              e.which == "67" ||
 							              e.which == "86" ||
 							              e.which == "88" ||
 							              e.which == "90")) &&
 
-								// selected text
+							// selected text
 							!selected
 						){
 							typograf($this);
@@ -104,13 +108,22 @@
 				caretPosition = getCaretPosition(obj);
 
 				text = text
+					// Minus
+					.replace(/\u0020-(\d)/g, "\u0020−$1")
+
 					// Dash
 					.replace(/(^|\n|\s|>)\-(\s)/g, "$1—$2")
 
-					// Minus
+					// Double hyphen
 					.replace(/\-{2} /g, function(){
 						caretPosition--;
 						return "— ";
+					})
+
+					// Multiple nbsp
+					.replace(/\u00a0{2,}|\u00a0\u0020|\u0020\u00a0/g, function(str){
+						caretPosition -= str.length - 1;
+						return "\u00a0";
 					})
 
 					// HTML-comment
@@ -120,9 +133,9 @@
 					})
 
 					// Numerical interval
-					.replace(/(\d)( )?[-—]( )?(\d)/g, function(str, $1, $2, $3, $4){
-						if ($2 == " ") { caretPosition-- }
-						if ($3 == " ") { caretPosition-- }
+					.replace(/(\d)(\u0020)?[-—](\u0020)?(\d)/g, function(str, $1, $2, $3, $4){
+						if ($2 == "\u0020") { caretPosition-- }
+						if ($3 == "\u0020") { caretPosition-- }
 						return $1 + "–" + $4;
 					})
 
