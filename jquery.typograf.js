@@ -21,15 +21,6 @@
 			handler: "",
 			restor: ""
 		}, options);
-		
-		var predlogi = [
-		    'a', 'for', 'if', 'in', 'of', 'on', 'or', 'the',
-	     'A', 'For', 'If', 'In', 'Of', 'On', 'Or', 'The',
- 		    'а', 'без', 'в', 'для', 'до', 'за', 'и', 'из', 'из-за', 'из-под', 'к', 'на', 'над', 'не', 'ну', 'о', 'об', 'от', 'по', 'под', 'при', 'про', 'с', 'у', 		
-		    'А', 'Без', 'В', 'Для', 'До', 'За', 'И', 'Из', 'Из-за', 'Из-под', 'К', 'На', 'Над', 'Не', 'Ну', 'О', 'Об', 'От', 'По', 'Под', 'При', 'Про', 'С', 'У'
-	 ];
-	 
-	 String.prototype.replacePredlogi = replacePredlogi();
 
 		return this.each(function(){
 			var $this = $(this),
@@ -115,7 +106,8 @@
 			function typograf (textField){
 				var text = textField.val();
 				caretPosition = getCaretPosition(obj);
-				String.prototype.replacePredlogi = replacePredlogi();
+
+				String.prototype.replacePrepositions = replacePrepositions;
 
 				text = text
 					// Minus
@@ -182,8 +174,8 @@
 					// Sizes
 					.replace(/(\d)[xх](\d)/ig, "$1×$2")
 
-					// Predlogi
-					.replacePredlogi()
+					// Prepositions
+					.replacePrepositions()
 
 					// Open quote
 					.replace(/\"([a-zа-я0-9…])/ig,
@@ -268,13 +260,20 @@
 			return t;
 		}
 
-		function replacePredlogi(){
-			var self = this;
-			
-			predlogi.foreach(function(p){
-			    self.replace(new Regexp("\s" + p + "\u0020", "g"), "$1" + p + "\u00a0");
-			});
+		function replacePrepositions(){
+			var self = this.toString(),
+				prepositions = [
+			    	'a', 'for', 'if', 'in', 'of', 'on', 'or', 'the',
+			    	'A', 'For', 'If', 'In', 'Of', 'On', 'Or', 'The',
+			    	'а', 'без', 'в', 'для', 'до', 'за', 'и', 'из', 'из-за', 'из-под', 'к', 'на', 'над', 'не', 'ну', 'о', 'об', 'от', 'по', 'под', 'при', 'про', 'с', 'у',
+			    	'А', 'Без', 'В', 'Для', 'До', 'За', 'И', 'Из', 'Из-за', 'Из-под', 'К', 'На', 'Над', 'Не', 'Ну', 'О', 'Об', 'От', 'По', 'Под', 'При', 'Про', 'С', 'У'
+			    ];
 
+			prepositions.forEach(function(p){
+				var regexp = "([\\s]+)" + p + "\u0020",
+				    replace = "$1" + p + "\u00a0";
+				self = self.replace(new RegExp(regexp, "g"), replace);
+			});
 			return self;
 		}
 	};
