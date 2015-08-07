@@ -9,8 +9,8 @@
 	Released under the MIT license.
 	http://www.opensource.org/licenses/mit-license.php
 
-	Version: v 0.1
-	Date: Thu Mar 24, 2015
+	Version: v 0.2
+	Date: Fri Aug 7, 2015
  */
 
 (function($){
@@ -173,19 +173,19 @@
 					.replace(/(\d)[xх](\d)/ig, "$1×$2")
 
 					// Open quote
-					.replace(/\"([a-zа-я0-9…])/ig,
+					.replace(/\"([a-z0-9\u0410-\u042f\u0401…])/ig,
 					         options.leftQuote + "$1")
 
 					// Close quote
-					.replace(/([a-zа-я0-9…?!])\"/ig,
+					.replace(/([a-z0-9\u0410-\u042f\u0401…?!])\"/ig,
 					         "$1" + options.rightQuote)
 
 					// Open quote
-					.replace(new RegExp("\"(" + options.leftQuote + "[a-zа-я0-9…])", "ig"),
+					.replace(new RegExp("\"(" + options.leftQuote + "[a-z0-9\u0410-\u042f\u0401…])", "ig"),
 					         options.leftQuote + "$1")
 
 					// Close quote
-					.replace(new RegExp("([a-zа-я0-9…?!]" + options.rightQuote + ")\"", "ig"),
+					.replace(new RegExp("([a-z0-9\u0410-\u042f\u0401…?!]" + options.rightQuote + ")\"", "ig"),
 					         "$1" + options.rightQuote)
 
 					// Fix HTML open quotes
@@ -196,9 +196,21 @@
 
 					// Fix HTML close quotes
 					.replace(new RegExp("([-a-z0-9]+=)[\"]" +
-					                    "([^" + options.leftQuote + options.rightQuote + "]*?)" +
+					                    "([^>" + options.leftQuote + options.rightQuote + "]*?)" +
 					                    "["   + options.leftQuote + options.rightQuote + "]", "ig"),
-					         "$1\"$2\"");
+					         "$1\"$2\"")
+					         
+					// Degree
+					.replace(new RegExp("([0-6]?[0-9])[\'\′]([0-6]?[0-9])?(\\d+)" +
+										"[" + options.rightQuote + "\"]", "g"), 
+							 "$1\′$2$3\″")
+					
+					// Prepositions         
+					.replace(new RegExp("((?:^|\n|\t|[\u00a0\u0020]|>)[A-Z\u0410-\u042f\u0401]{1,2})\u0020", "ig"), 
+							 "$1\u00a0")
+							 
+					.replace(new RegExp("(?:\s|\t|[\u00a0\u0020])(же?|л[иь]|бы?|ка)([.,!?:;])?\u00a0", "ig"), 
+							 "\u00a0$1$2\u0020");
 
 				textField.val(text);
 

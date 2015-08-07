@@ -8,26 +8,40 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script type="text/javascript" src="./jquery.typograf.js"></script>
 		<script type="text/javascript" src="./example.js"></script>
+		<style>
+			.rur{ font-family: 'PT Sans', serif }
+			.hlg{ background-color: #B8FBBA }
+			.hlb{ background-color: #B7ECF1 }
+		</style>
 	</head>
 	<body>
 		<h1>jQuery.Typograf.js</h1>
+		<small>ver. 0.2</small>
 		
 		<p>"Вы все еще кое-как верстаете в "Word-е"? - Тогда мы идем к вам!"</p>
-		<button type="button" id="example">Пример</button>
+		<button type="button" id="example">Вставить пример</button>
 		
 		<br/><br/>
 		
 		<label>Типографика и возврат по клику (кавычки „лапки“)</label><br/>
-		<input type="text" style="width:800px; font-family: sans-serif" autocomplete="off" class="typograf" />
+		<input type="text" style="width:800px; font-family: 'PT Sans', sans-serif" autocomplete="off" class="typograf" />
 		<button type="button" id="typograf">Типографить</button>
 		<button type="button" id="restore" disabled="true" autocomplete="off">Восстановить</button>
 		
 		<br/><br/>
 		
-		<label>Автотипографика на лету при печати (кавычки «ёлочки»)</label><br/>
-		<textarea rows="15" style="width: 800px; font-family: sans-serif" autocomplete="off" class="typograf"></textarea>
+		<label>Автотипографика на лету при наборе (кавычки «ёлочки»)</label><br/>
+		<textarea rows="10" style="width: 800px; font-family: 'PT Sans', sans-serif" autocomplete="off" class="typograf"></textarea>
+
+		<h3>Подсветка изменений</h3>
+		<div id="highlighted">Введите текст в &lt;textarea&gt;</div>
 		
-		<p>Умеет верстать кавычки, тире, спецсимволы: …, ©, ®, ™, ₽. Умеет ставить минус между числами и &times; между размерными единицами.</p>
+		<h3>Умеет:</h3>
+			<ul>
+				<li>Верстать кавычки, тире, спецсимволы: …, ©, ®, ™, <span class="rur">₽</span></li>
+				<li>Ставить минус между числами и &times; между размерными единицами</li>
+				<li>Привязывать неразрывным пробелом союзы и предлоги к последующим словам, а частицы к предыдущим</li>
+			</ul>
 		
 		<p>Проект на <a href="https://github.com/Spearance/jQuery.Typograf.js">GitHub</a></p>
 	</body>
