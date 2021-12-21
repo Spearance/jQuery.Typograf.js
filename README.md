@@ -1,6 +1,6 @@
 # jQuery.Typograf.js #
 
-Это часть одноимённого сервиса [typograf.ru](http://typograf.ru)
+Эта версия больше не поддерживается, актуальная версия [FlyTypograf.js](https://github.com/Spearance/FlyTypograf.js)
 
 ## Что делает «Типограф»? ##
 
